@@ -71,9 +71,9 @@
                 })
             },
             detail(item) {
-                db.save('qucanDetail', item)
+                db.save('takeDetail', item)
                 uni.navigateTo({
-                    url: '/pages/qucan/detail'
+                    url: '/pages/take/take-detail'
                 })
             },
             // 取消报餐
@@ -154,7 +154,10 @@
                 })
             }
         },
-        onLoad() {
+        onLoad(option) {
+            
+        },
+        onShow() {
             this.getMealList()
         }
     }

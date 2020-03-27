@@ -74,7 +74,7 @@
                 报餐金额
             </view>
             <view class="uni-flex-item">
-                ￥{{ detail.totalAmount | moneyFilter }}
+                ￥{{ detail.totalAmount | centFilter }}
             </view>
         </view>
         <view class="uni-flex uni-row">
@@ -83,7 +83,7 @@
             <view class="uni-flex-item">
             </view>
             <view class="uni-flex-item">
-                合计：￥{{ detail.totalAmount | moneyFilter }}
+                合计：￥{{ detail.totalAmount | centFilter }}
             </view>
         </view>
         <view v-if="showCancel" class="uni-flex uni-row" style="margin-top: 10px;">
@@ -116,8 +116,8 @@
                 }
                 return map[status]
             },
-            moneyFilter(totalAmount) {
-                return formatter.formatMoney(math.chain(totalAmount).divide(100).done())
+            centFilter(cent) {
+                return formatter.formatMoney(math.chain(cent).divide(100).done())
             }
         },
         components: {
@@ -132,7 +132,7 @@
         },
         methods: {
             back() {
-                db.remove('qucanDetail')
+                db.remove('takeDetail')
                 uni.navigateBack({
                     delta: 1
                 })
@@ -191,7 +191,7 @@
             }
         },
         onLoad(option) {
-            this.detail = db.get('qucanDetail')
+            this.detail = db.get('takeDetail')
         },
         onShow() {
             if (this.detail.status == 'WAIT') {
@@ -213,7 +213,7 @@
             }
         },
         onUnload() {
-            db.remove('qucanDetail')
+            db.remove('takeDetail')
         }
     }
 </script>

@@ -2,7 +2,7 @@
     <view>
         <uni-nav-bar left-icon="back" left-text="返回" title="确认订单" :fixed="true" :status-bar="true" @clickLeft="back"></uni-nav-bar>
         <view class="uni-flex uni-row">
-            <view class="uni-flex-item" :class="item.checked?'order-mode-active':''" v-for="(item, index) in modeList"
+            <view v-if="item.status" class="uni-flex-item" :class="item.checked?'order-mode-active':''" v-for="(item, index) in modeList"
                 :key="index" @click="checkOrderMode(index)">
                 <uni-icons :type="getOrderModeIcon(item.orderMode)" size="30"></uni-icons>
                 <text>{{ item.orderMode | orderModeFilter }}</text>
@@ -170,7 +170,8 @@
                 //备注
                 remark: '',
                 //配送地址
-                address: {}
+                address: {},
+                currentOrderCount: []
             }
         },
         computed: {
@@ -233,6 +234,7 @@
                 this.$refs.popup.close()
             },
             confirm() {
+                let that = this
                 if (this.currentOrderMode == '') {
                     uni.showToast({
                         title: '请选择取餐方式',
@@ -244,6 +246,20 @@
                     if (!this.address.detail) {
                         uni.showToast({
                             title: '请填写配送地址',
+                            icon: 'none',
+                            duration: 2000
+                        })
+                        return
+                    }
+                }
+                const temp = this.currentOrderCount.find(function(ele) {
+                    return ele.busiName == that.busiName
+                })
+                //判断订餐份数是否超过限制
+                if (temp) {
+                    if (temp.orderCount >= this.restConfig.orderNum) {
+                        uni.showToast({
+                            title: '订餐份数超过限制',
                             icon: 'none',
                             duration: 2000
                         })
@@ -335,6 +351,7 @@
                     }
                 })
             },
+            //获取职工配送地址
             getAddress() {
                 let that = this
                 this.$http.get('/wechat/employee/getAddress.json', {
@@ -347,6 +364,19 @@
                         that.address.contact = res.data.entity.contact
                         that.address.phone = res.data.entity.phone
                         that.$forceUpdate()
+                    }
+                })
+            },
+            //获取本次预约日期的订餐数量
+            getOrderCount(orderDate) {
+                let that = this
+                this.$httpForm.post('/wechat/order/count.json', {
+                    buyerId: that.employee.id,
+                    startTime: orderDate,
+                    endTime: orderDate
+                }).then((res) => {
+                    if (res.data.code === 'SUCCESS') {
+                        that.currentOrderCount = res.data.rows || []
                     }
                 })
             }
@@ -364,6 +394,7 @@
             const remark = db.get('remark', '')
             this.remark = remark
             this.getAddress()
+            this.getOrderCount(this.orderDate)
         }
     }
 </script>

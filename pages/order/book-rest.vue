@@ -1,8 +1,28 @@
 <template>
     <view>
         <uni-nav-bar left-icon="back" left-text="返回" title="预约订单" :fixed="true" :status-bar="true" @clickLeft="back"></uni-nav-bar>
+        
+        <uni-popup ref="takeCode" type="center" :maskClick="false">
+            <view style="width: 600rpx;height: 900rpx;margin: 50rpx 40rpx;background-color: #F0F0F0;">
+                <view class="close">
+                    <uni-icons @click="close" type="closeempty" size="30"></uni-icons>
+                </view>
+                <view class="uni-flex uni-row">
+                    <view class="uni-flex-item">
+                        
+                    </view>
+                    <view class="uni-flex-item">
+                        <tki-qrcode ref="qrcode" cid="takeCode" :val="takeCodeContent" :size="150" unit="px" :onval="true" :showLoading="false" />
+                    </view>
+                    <view class="uni-flex-item">
+                        
+                    </view> 
+                </view>
+            </view>
+        </uni-popup>
+        
         <view class="uni-flex uni-row">
-            <view class="uni-flex-item">
+            <view class="uni-flex-item" @click="showTakeCode">
                 <view style="text-align: center; padding: 10px 0;">
                     <text>取餐码</text>
                 </view>
@@ -34,8 +54,10 @@
 
 <script>
     import db from '@/utils/localstorage'
+    import tkiQrcode from '@/components/tki-qrcode/tki-qrcode'
 
     export default {
+        components: { tkiQrcode },
         data() {
             return {
                 listData: [],
@@ -46,7 +68,9 @@
                     contentdown: '上拉加载更多',
                     contentrefresh: '加载中',
                     contentnomore: '没有更多'
-                }
+                },
+                takeCodeContent: '',
+                intervalID: 0
             }
         },
         methods: {
@@ -54,6 +78,24 @@
                 uni.navigateBack({
                     delta: 1
                 })
+            },
+            close() {
+                clearInterval(this.intervalID)
+                this.$refs.qrcode._clearCode()
+                this.$refs.takeCode.close()
+            },
+            showTakeCode() {
+                let that = this
+                this.$refs.takeCode.open()
+                this.takeCodeContent = new Date().getTime() + ''
+                setTimeout(() => {
+                    that.$refs.qrcode._makeCode()
+                    const intervalID = setInterval(() => {
+                        that.takeCodeContent =  new Date().getTime() + ''
+                        console.log(that.takeCodeContent)
+                    }, 1000 * 10)
+                    that.intervalID = intervalID
+                }, 1000)    
             },
             toMyOrder() {
                 uni.navigateTo({
@@ -109,6 +151,11 @@
 </script>
 
 <style>
+    .close {
+        position: relative;
+        float: right;
+    }
+    
     .uni-media-list-logo {
         width: 180rpx;
         height: 180rpx;

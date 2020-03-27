@@ -55,7 +55,7 @@
             },
             continueBook() {
                 uni.redirectTo({
-                    url: '/pages/order/detail'
+                    url: '/pages/order/book-time'
                 })
             },
             toIndex() {
