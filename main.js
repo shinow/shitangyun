@@ -12,10 +12,16 @@ import {
 
 import moment from 'moment'
 
+import Vconsole from 'vconsole'
+
+
 // 使用中文时间
 moment.locale('zh-cn')
 // 全局使用moment
 Vue.prototype.$moment = moment
+
+const vConsole = new Vconsole()
+Vue.use(vConsole)
 
 const http = new Request()
 

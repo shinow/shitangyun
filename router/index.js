@@ -29,32 +29,40 @@ httpRequest.setConfig((config) => {
 
 //全局路由前置守卫
 router.beforeEach((to, from, next) => {
-    const wxUserInfo = store.state.wxUserInfo
-    httpRequest.post('/wechat/employee/getEmployeeByOpenid.json', {
-        openid: wxUserInfo.openid
-    }).then((res) => {
-        if (res.data.code == 'SUCCESS') {
-            if (res.data.entity) {
-                store.commit('bind', true)
-                store.commit('setEmployee', res.data.entity)
-            } else {
-                store.commit('bind', false)
-                store.commit('setEmployee', {})
-            }
+    if (to.path.indexOf('/pages/auth/auth') != -1) {
+        next()
+    } else {
+        const wxUserInfo = store.state.wxUserInfo
+        if (wxUserInfo.openid) {
+            httpRequest.post('/wechat/employee/getEmployeeByOpenid.json', {
+                openid: wxUserInfo.openid
+            }).then((res) => {
+                if (res.data.code == 'SUCCESS') {
+                    if (res.data.entity) {
+                        store.commit('bind', true)
+                        store.commit('setEmployee', res.data.entity)
+                    } else {
+                        store.commit('bind', false)
+                        store.commit('setEmployee', {})
+                    }
+                } else {
+                    store.commit('bind', false)
+                    store.commit('setEmployee', {})
+                }
+                if (whiteList.indexOf(to.path) !== -1) {
+                    next()
+                } else {
+                    if (!store.state.hasBind) {
+                        next('/pages/bind/bind')
+                    } else {
+                        next()
+                    }
+                }
+            })
         } else {
-            store.commit('bind', false)
-            store.commit('setEmployee', {})
+            next('/pages/auth/auth')
         }
-        if (whiteList.indexOf(to.path) !== -1) {
-            next()
-        } else {
-            if (!store.state.hasBind) {
-                next('/pages/bind/bind')
-            } else {
-                next()
-            }
-        }
-    })
+    }
 })
 
 // 全局路由后置守卫

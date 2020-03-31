@@ -157,11 +157,12 @@
         },
         onLoad() {
             // #ifdef  H5
-            if (!sessionStorage.getItem('hasAuth')) {
+            console.log(window.location)
+            /* if (!sessionStorage.getItem('hasAuth')) {
                 uni.redirectTo({
                     url: '/pages/auth/auth'
                 })
-            }
+            } */
             // #endif
         },
         onShow() {

@@ -17,45 +17,28 @@
                 scope: ['snsapi_base', 'snsapi_userinfo']
             }
         },
+        computed: mapState(['wxUserInfo']),
         methods: {
             ...mapMutations(['bind', 'setWxUserInfo', 'setEmployee']),
-            /**
-             * 根据参数名 获取 URL 路径中的参数  
-             * @param {String} name 要读取的参数名称  
-             */
-            getUrlParam(name) {
-                const reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)')
-                let url = window.location.href.split('#')[0]
-                let search = url.split('?')[1]
-                if (search) {
-                    let r = search.substr(0).match(reg)
-                    if (r !== null) {
-                        return unescape(r[2])
-                    }
-                    return null
-                } else {
-                    return null
-                }
+            getUrlKey(name) {
+                return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.href) ||
+                    [, ""])[1].replace(/\+/g, '%20')) || null
             },
             toIndex() {
-                // #ifdef H5
-                sessionStorage.setItem('hasAuth', true)
-                // #endif
                 uni.reLaunch({
-                    url: '/pages/index/index',
+                    url: '/pages/index/index'
                 })
             },
             // 微信公众号授权
             wxAuthorize() {
                 let link = window.location.href
-                let code = this.getUrlParam('code') // 地址解析  
+                let code = this.getUrlKey('code')
+                console.log(code)
                 // 已经授权登录过的就不用再授权了
-                // #ifdef H5
-                if (sessionStorage.getItem('hasAuth')) {
+                if (this.wxUserInfo.openid) {
                     this.toIndex()
                     return
                 }
-                // #endif
                 // 如果拿到code，调用授权接口，没有拿到就跳转微信授权链接获取
                 if (code) {
                     let that = this
@@ -85,15 +68,27 @@
                     //使用encodeURIComponent方法对对象进行字符串化和编码
                     let uri = encodeURIComponent(link)
                     //授权方式：scope[0]:'snsapi_base',scope[1]:snsapi_userinfo
-                    let scope = this.scope[0]
+                    let scope = this.scope[1]
                     let authURL =
                         `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${appid}&redirect_uri=${uri}&response_type=code&scope=${scope}&state=123#wechat_redirect`
-                    window.location.replace(authURL)
+                    window.location.href = authURL
                 }
             }
         },
         onLoad(option) {
-            this.wxAuthorize()
+            let that = this
+            uni.showModal({
+                title: '确定授权吗',
+                content: window.location.href,
+                success: function(res) {
+                    if (res.confirm) {
+                        that.wxAuthorize()
+                    } else if (res.cancel) {
+                        console.log('用户点击取消');
+                    }
+                }
+            })
+            
         }
     }
 </script>

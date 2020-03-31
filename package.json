@@ -14,6 +14,8 @@
     "mathjs": "^6.6.1",
     "moment": "^2.24.0",
     "uni-read-pages": "^1.0.4",
-    "uni-simple-router": "^1.5.2"
-  }
+    "uni-simple-router": "^1.5.2",
+    "vconsole": "^3.3.4"
+  },
+  "devDependencies": {}
 }
