@@ -11,7 +11,7 @@ Vue.use(Router)
 
 //初始化
 const router = new Router({
-    routes: ROUTES //路由表
+    routes: ROUTES //路由表从pages.json中读取
 })
 
 //路由守卫白名单
