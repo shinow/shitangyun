@@ -15,7 +15,7 @@ const router = new Router({
 })
 
 //路由守卫白名单
-const whiteList = ['/pages/index/index', '/pages/auth/auth', '/pages/bind/bind']
+const whiteList = ['/pages/index/index', '/pages/bind/bind']
 
 const httpRequest = new Request()
 
@@ -32,8 +32,9 @@ router.beforeEach((to, from, next) => {
     if (to.path.indexOf('/pages/auth/auth') != -1) {
         next()
     } else {
-        const wxUserInfo = store.state.wxUserInfo
-        if (wxUserInfo.openid) {
+        const hasAuth = store.state.hasAuth
+        if (hasAuth) {
+            const wxUserInfo = store.state.wxUserInfo
             httpRequest.post('/wechat/employee/getEmployeeByOpenid.json', {
                 openid: wxUserInfo.openid
             }).then((res) => {

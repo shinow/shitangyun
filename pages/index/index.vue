@@ -155,15 +155,8 @@
                 }
             }
         },
-        onLoad() {
-            // #ifdef  H5
-            console.log(window.location)
-            /* if (!sessionStorage.getItem('hasAuth')) {
-                uni.redirectTo({
-                    url: '/pages/auth/auth'
-                })
-            } */
-            // #endif
+        onLoad(option) {
+            
         },
         onShow() {
             this.getBalance()

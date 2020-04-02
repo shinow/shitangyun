@@ -14,14 +14,16 @@ import moment from 'moment'
 
 import Vconsole from 'vconsole'
 
+// 引入调试工具
+if(process.env.NODE_ENV === 'development'){
+    const vConsole = new Vconsole()
+    Vue.use(vConsole)
+}
 
 // 使用中文时间
 moment.locale('zh-cn')
 // 全局使用moment
 Vue.prototype.$moment = moment
-
-const vConsole = new Vconsole()
-Vue.use(vConsole)
 
 const http = new Request()
 

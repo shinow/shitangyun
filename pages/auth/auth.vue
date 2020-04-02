@@ -17,9 +17,9 @@
                 scope: ['snsapi_base', 'snsapi_userinfo']
             }
         },
-        computed: mapState(['wxUserInfo']),
+        computed: mapState(['hasAuth', 'wxUserInfo']),
         methods: {
-            ...mapMutations(['bind', 'setWxUserInfo', 'setEmployee']),
+            ...mapMutations(['auth', 'bind', 'setWxUserInfo', 'setEmployee']),
             getUrlKey(name) {
                 return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.href) ||
                     [, ""])[1].replace(/\+/g, '%20')) || null
@@ -35,7 +35,7 @@
                 let code = this.getUrlKey('code')
                 console.log(code)
                 // 已经授权登录过的就不用再授权了
-                if (this.wxUserInfo.openid) {
+                if (this.hasAuth) {
                     this.toIndex()
                     return
                 }
@@ -53,6 +53,7 @@
                             } else {
                                 that.bind(false)
                             }
+                            that.auth(true)
                             that.setWxUserInfo(res.data.data)
                             that.toIndex()
                         } else {
