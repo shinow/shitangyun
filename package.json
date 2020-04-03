@@ -17,5 +17,7 @@
     "uni-simple-router": "^1.5.2",
     "vconsole": "^3.3.4"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "@vue/devtools": "^5.3.3"
+  }
 }

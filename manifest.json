@@ -43,7 +43,7 @@
     "quickapp" : {},
     "h5" : {
         "devServer" : {
-            "port" : 8080,
+            "port" : 8081,
             "disableHostCheck" : true,
             "proxy" : {
                 "" : {
@@ -56,7 +56,7 @@
         "domain" : "192.168.0.144",
         "router" : {
             "mode" : "hash",
-            "base" : "shitangyun"
+            "base" : ""
         }
     },
     "mp-weixin" : {

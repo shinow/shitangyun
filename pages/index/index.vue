@@ -156,7 +156,13 @@
             }
         },
         onLoad(option) {
-            
+            // #ifdef H5
+            //授权回调如果带有code值则改变url
+            if (window.location.href.indexOf('code') != -1) {
+                let url = window.location.protocol + '//' + window.location.host + '/#/';
+                window.history.replaceState({}, 0, url)
+            }
+            // #endif
         },
         onShow() {
             this.getBalance()

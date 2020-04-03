@@ -1,3 +1,4 @@
+import devtools from '@vue/devtools'
 import Vue from 'vue'
 import App from './App'
 
@@ -15,7 +16,9 @@ import moment from 'moment'
 import Vconsole from 'vconsole'
 
 // 引入调试工具
-if(process.env.NODE_ENV === 'development'){
+if(process.env.NODE_ENV === 'development') {
+    devtools.connect('192.168.0.144')
+    
     const vConsole = new Vconsole()
     Vue.use(vConsole)
 }
